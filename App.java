@@ -156,11 +156,11 @@ public class App{
 		ButtonGroup group = new ButtonGroup();
 		group.add(female_checkbox);
 		group.add(male_checkbox);
+
 		cons.gridy = 4;
 		cons.gridx = 0;register_panel.add(new JLabel("Gender"),cons);
 		cons.gridx = 1;register_panel.add(female_checkbox,cons);
 		cons.gridx = 2;register_panel.add(male_checkbox,cons);
-
 		register_button.setFont(new Font("Serif", Font.PLAIN, 9));
 		register_button.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -180,7 +180,7 @@ public class App{
 										return;
 									}
 								}
-								if (database.CheckUser(fname,lname,tele,gender)){
+								if (!database.CheckUser(fname,lname,tele,gender)){
 									database.CreateUser(fname,lname,tele,gender);
 									lastName_field.setText("");
 									firstName_field.setText("");
