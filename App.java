@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import java.awt.geom.Arc2D;
+
 
 public class App{
 	final boolean DEBUG = true;
@@ -12,16 +14,7 @@ public class App{
 
 	JFrame frame = new JFrame("Login");
 	JPanel panel = new JPanel();
-	//Login Panel and compenents
-	JPanel login_panel = new JPanel();
-	JLabel login_text = new JLabel("Login to Countinue",JLabel.CENTER);
-	//Fields
-	JTextField name_field = new JTextField("UserName",30);
-	JPasswordField pass_field = new JPasswordField("Password",30);
 	
-	//LButtons
-	JButton login_button = new JButton("Login");
-	JButton exit_button = new JButton("Exit");
 
 	//Application Panel and compenents
 	JFrame app_frame = new JFrame("Demo Application");
@@ -46,75 +39,53 @@ public class App{
 	JButton register_button = new JButton("Register User");
 	DB database = new DB("demo","users");
 	GridBagConstraints cons = new GridBagConstraints();
+	JPanel login_panel = new JPanel();
+	JPanel users_panel = new JPanel();
+	JPanel dashboard = new JPanel();
+
+
 
 	String[] user_features = {"First Name","Last Name", "Telephone Number","Gender"};
 	public static void main(String[] args){
-
-		new App();
+		SwingUtilities.invokeLater(new Runnable() {
+         @Override
+         public void run() {
+            new App();
+         }
+      });
+    }
+	public void newDashboard(){
+		setDefaults(dashboard);
+		GridBagConstraints cons = new GridBagConstraints();
+		cons.fill = GridBagConstraints.HORIZONTAL;
+		cons.gridy = 0;
+		cons.gridx = 0;
+		// Chart title
+		dashboard.add(new JLabel("Gender Balance Chart"),cons);
+		// Chart postion
 		
-	}
-	
-	private void constructLoginPanel(){
-		login_button.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				boolean auth = (checkInput(name_field.getText().toCharArray(),correct_name)) && (checkInput(pass_field.getPassword(),correct_pass));
-				if (auth){
-					frame.setVisible(false);
-					panel.remove(login_panel);
-					panel.add(app_panel);
-					frame.setVisible(true);
-				}else{
-					JOptionPane p = new JOptionPane();
-					p.showMessageDialog(null,"Wrong Password. Try Again");
-				}
-			}
-		});
-
-
-		exit_button.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				frame.dispose();System.exit(0);
-			}
-
-		});
-		pass_field.addFocusListener(new FocusListener() {
-		    public void focusGained(FocusEvent e) {
-		    	pass_field.setText("");
- 		    }
-		    public void focusLost(FocusEvent e) {}
-		});
-
-		name_field.addFocusListener(new FocusListener() {
-		    public void focusGained(FocusEvent e) {
-		        name_field.selectAll();
-		    }
-
-		    public void focusLost(FocusEvent e) {}
-		});
-		login_text.setFont(new Font("Serif", Font.PLAIN, 29));
-		login_panel.setLayout(new GridBagLayout());
-		login_panel.setBackground(Color.BLUE);
+		// gender_ratio is the female to male ratio according to the database
+		double gender_ratio = (double) database.CountRows("`gender`='1'")/database.CountRows("`gender`='0'");
 		
-		cons.insets = new Insets(60,0,0,0);cons.fill = GridBagConstraints.VERTICAL;
-		cons.gridy = 0;login_panel.add(login_text,cons);
-
-		cons.insets = new Insets(20,0,0,0);
-		cons.gridy = 1;login_panel.add(name_field,cons);
-		cons.gridy = 2;login_panel.add(pass_field,cons);
-
-		cons.insets = new Insets(20,0,0,0);cons.fill = GridBagConstraints.VERTICAL;
-		cons.gridy = 4;login_panel.add(login_button,cons);
-		cons.gridy = 5;login_panel.add(exit_button,cons);
-
-		login_panel.setPreferredSize(new Dimension(440,380));
-		panel.setLayout(new CardLayout());
-		panel.add(login_panel);
-
+		cons.gridy = 1;dashboard.add(new JLabel("Female to Male Ratio  1 : "+Double.toString(gender_ratio)));
+		// checking if ratio is vaild
+		cons.gridy = 2;
+		cons.gridwidth = 200;
+		cons.insets = new Insets(30,30,0,0);
+		if(gender_ratio > 0){
+			//showing chart
+			Chart c = new Chart(gender_ratio);
+			c.setPreferredSize(new Dimension(300,300));
+			c.setBackground(Color.BLACK);
+			dashboard.add(c,cons);
+		}else{
+			//in case gender_ratio is invalid a text to show error
+			dashboard.add(new JLabel("Unable to show Chart"),cons);
+		}
 	}
-
-	public App(){
-		register_panel.setLayout(new GridBagLayout());
-		register_panel.setBackground(Color.BLUE);
+	private void newRegisterForm(){
+		setDefaults(register_panel);
+		GridBagConstraints cons = new GridBagConstraints();
 		cons.fill = GridBagConstraints.VERTICAL;
 
 		cons.gridy = 0;
@@ -134,18 +105,13 @@ public class App{
 		cons.gridx = 0;register_panel.add(telephone_label,cons);
 		cons.gridx = 1;register_panel.add(telephone_field,cons);
 
-		//male_checkbox.setPreferredSize(new Dimension(25,20));
-		//female_checkbox.setPreferredSize(new Dimension(25,20));
-		//female_checkbox.setBackground(Color.WHITE);
 		female_checkbox.setFont(new Font("Female", Font.PLAIN, 9));
 		female_checkbox.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				male_checkbox.setSelected(false);
 				female_checkbox.setSelected(true);
-			}
-		});
+			}});
 
-		male_checkbox.setBackground(Color.WHITE);
 		male_checkbox.setFont(new Font("Serif", Font.PLAIN, 9));
 		male_checkbox.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -153,10 +119,6 @@ public class App{
 				male_checkbox.setSelected(true);
 			}
 		});
-		ButtonGroup group = new ButtonGroup();
-		group.add(female_checkbox);
-		group.add(male_checkbox);
-
 		cons.gridy = 4;
 		cons.gridx = 0;register_panel.add(new JLabel("Gender"),cons);
 		cons.gridx = 1;register_panel.add(female_checkbox,cons);
@@ -208,33 +170,112 @@ public class App{
 
 		cons.gridx = 1;
 		cons.gridy = 6;register_panel.add(register_button,cons);
-
-
+	}
+	public void setDefaults(JPanel p){
+		p.setLayout(new GridBagLayout());
+		p.setBackground(Color.BLUE);
+		p.setPreferredSize(new Dimension(440,380));
+	}
+	public void newUsersTab(){
 		// View Users' table
-		JPanel users_planel = new JPanel();
+		setDefaults(users_panel);
+		GridBagConstraints cons = new GridBagConstraints();
+		cons.fill = GridBagConstraints.VERTICAL;
 		cons.gridx = 1;cons.gridy = 0;
 		JLabel users_text = new JLabel("View Registered Users");
-		users_planel.add(users_text,cons);
+		users_panel.add(users_text,cons);
 
 		//Table of the register users
-		cons.gridx = 1;cons.gridy = 1;
-		String[][] users = database.GetUsers();
-		users_planel.add(new JTable(users,user_features),cons);
-
-
+		cons.gridy = 3;
+		try{
+			users_panel.add(new JTable(database.GetUsers(),user_features),cons);
+		}catch(Exception e){
+			users_panel.add(new JLabel("No Users Found"),cons);
+		}
 		
-		app_panel.addTab("View Users",users_planel);
-		app_panel.addTab("Register User",register_panel);
-		app_panel.setPreferredSize(new Dimension(640,480));
-		constructLoginPanel();
+	}
+	public App(){
+		
+		setDefaults(login_panel);
+		
+		login_button.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				//checking if username and passoword is correct
+				boolean auth = (checkInput(username.getText().toCharArray(),correct_name)) && (checkInput(password.getPassword(),correct_pass));
+				if (auth){
+					//Granting user acess
 
+					
+					panel.remove(login_panel);
+
+					frame.setVisible(false);
+					
+
+
+					newDashboard();
+					newUsersTab();
+					newRegisterForm();
+
+					// adding dashboard panel to application_panel
+					app_panel.addTab("Dashboard",dashboard);
+
+					// adding list of users panel to application_panel
+					app_panel.addTab("View Users",users_panel);
+
+					// adding register form panel to application_panel
+					app_panel.addTab("Register User",register_panel);
+					// giving login button a authorization fuctionality (action) 
+					
+					// setting size of application_panel
+					app_panel.setPreferredSize(new Dimension(640,480));
+
+
+					panel.add(app_panel);
+					frame.setVisible(true);
+				
+				}else{
+					JOptionPane p = new JOptionPane();
+					p.showMessageDialog(null,"Wrong Password. Try Again");
+				}}});
+
+		// closing program when exit action is clicked e
+		exit_button.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				frame.dispose();
+				System.exit(0);
+			}});
+		// Login fields  functionality
+		password.addFocusListener(new FocusListener() {
+		    public void focusGained(FocusEvent e) {password.setText("");}
+		    public void focusLost(FocusEvent e) {}});
+		username.addFocusListener(new FocusListener() {
+		    public void focusGained(FocusEvent e) {username.selectAll();}
+		    public void focusLost(FocusEvent e) {}});
+	
+		GridBagConstraints cons = new GridBagConstraints();
+		cons.gridy = 0;cons.gridx = 1;
+		cons.insets = new Insets(60,0,0,0);cons.fill = GridBagConstraints.VERTICAL;
+		login_text.setFont(new Font("Serif", Font.PLAIN, 29));
+		login_panel.add(login_text,cons);
+		//adding username 
+		cons.insets = new Insets(20,0,0,0);
+		cons.gridy = 1;login_panel.add(username,cons);
+		cons.gridy = 2;login_panel.add(password,cons);
+
+		cons.insets = new Insets(30,0,0,0);
+		cons.gridy = 4;login_panel.add(login_button,cons);
+		cons.gridy = 5;login_panel.add(exit_button,cons);
+
+		panel.add(login_panel);
+		// setting size of main_panel
+		panel.setLayout(new CardLayout());
 		panel.setPreferredSize(new Dimension(640,480));
-
 		frame.add(panel);
 		frame.setSize(640,480);
 		frame.setVisible(true);
 	}
-	private boolean checkInput(char[] input,char[] correct_input){
+
+	public boolean checkInput(char[] input,char[] correct_input){
 		if (!DEBUG){
 			if (correct_input.length == input.length){
 				for(int i=0;i<correct_input.length;i++){
@@ -247,5 +288,44 @@ public class App{
 			return false;
 		}
 		return true;
+	}
+
+	JLabel login_text = new JLabel("Login to Countinue",JLabel.CENTER);
+	//Fields
+	JTextField username = new JTextField("UserName",30);
+	JPasswordField password = new JPasswordField("Password",30);
+	
+	//LButtons
+	JButton login_button = new JButton("Login");
+	JButton exit_button = new JButton("Exit");
+	
+}
+	
+class Chart extends JComponent{
+	double female_to_male;
+	Color male_Color = Color.RED;
+	Color female_Color = Color.PINK;
+	Rectangle area;
+	public Chart(double genderRatio){
+		female_to_male = genderRatio;
+	}
+	public Chart(double genderRatio,Color femaleColor,Color maleColor){
+		female_to_male = genderRatio;
+		male_Color = maleColor;
+		female_Color = femaleColor;
+	}
+	@Override
+	public void paint(Graphics g){
+		super.paint(g);
+		Graphics2D g2 = (Graphics2D) g;
+		int female_size = (int) (360.0/(1.0+female_to_male));
+		Arc2D arc = new Arc2D.Double(Arc2D.PIE);
+		arc.setArc(0.0,0.0,100,100,0,female_size,Arc2D.PIE);
+		g2.setColor(female_Color);
+		g2.draw(arc);g2.fill(arc);
+		Arc2D marc = new Arc2D.Double(Arc2D.PIE);
+		marc.setArc(0.0,0.0,100,100,female_size,360,Arc2D.PIE);
+		g2.setColor(male_Color);
+      	g2.draw(marc);
 	}
 }
