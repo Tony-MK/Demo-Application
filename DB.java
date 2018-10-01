@@ -26,7 +26,7 @@ class DB{
 					"jdbc:mysql://localhost:3307/"+database_name+"?useSSL=false","root", "Amakau@123"
 			);
 			Statement stmt = conn.createStatement();
-			ResultSet res = stmt.executeQuery("SELECT "+nameColo+" FROM "+table_name+" where firstname="+fname+"lastname="+lname+"telephone="+telephone+"gender="+gender+" limit=1;"
+			ResultSet res = stmt.executeQuery("SELECT "+nameColo+" FROM "+table_name+" WHERE `firstname`='"+fname+"' AND `lastname`='"+lname+"' AND `telephone`='"+telephone+"' AND `gender`='"+gender+"' limit 1;"
 				);
 			return res.next();
 		}catch(SQLException ex){
