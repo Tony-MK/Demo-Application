@@ -6,11 +6,12 @@ import java.awt.geom.Arc2D;
 
 class Chart extends JComponent{
 	double female_to_male;
-	Color male_Color = Color.RED;
+	Color male_Color = Color.GREEN;
 	Color female_Color = Color.PINK;
 	Rectangle area;
-	public Chart(double genderRatio){
+	public Chart(double genderRatio,int width,int height){
 		female_to_male = genderRatio;
+		setPreferredSize(new Dimension(width,height));
 	}
 	@Override
 	public void paint(Graphics g){

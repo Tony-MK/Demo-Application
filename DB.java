@@ -7,26 +7,26 @@ class DB{
 		this.table_name = userstable;
 	}
 	private String nameColo = "firstname,lastname,telephone,gender";
-	public void CreateUser(String fname,String lname,String telephone,String gender){
+	public void CreateUser(String fname,String lname,String telephone,String dob,String gender){
 		try{
 			Connection conn = DriverManager.getConnection(
 					"jdbc:mysql://localhost:3307/"+database_name+"?useSSL=false","Tony", "pass"
 			);
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(
-				"INSERT INTO "+table_name+" ("+nameColo+") VALUES('"+fname+"','"+lname+"','"+telephone+"','"+gender+"');"
+				"INSERT INTO "+table_name+" ("+nameColo+") VALUES('"+fname+"','"+lname+"','"+telephone+"','"+","+dob+","+gender+"');"
 			);
 		}catch(SQLException ex){
 			ex.printStackTrace();
 		}	
 	}
-	public boolean CheckUser(String fname,String lname,String telephone,String gender){
+	public boolean CheckUser(String fname,String lname,String telephone,String dob,String gender){
 		try{
 			Connection conn = DriverManager.getConnection(
 					"jdbc:mysql://localhost:3307/"+database_name+"?useSSL=false","root", "Amakau@123"
 			);
 			Statement stmt = conn.createStatement();
-			ResultSet res = stmt.executeQuery("SELECT "+nameColo+" FROM "+table_name+" WHERE `firstname`='"+fname+"' AND `lastname`='"+lname+"' AND `telephone`='"+telephone+"' AND `gender`='"+gender+"' limit 1;"
+			ResultSet res = stmt.executeQuery("SELECT "+nameColo+" FROM "+table_name+" WHERE `firstname`='"+fname+"' AND `lastname`='"+lname+"' AND `telephone`='"+telephone+"' AND `date_of_birth`='"+dob+"' AND `gender`='"+gender+"' limit 1;"
 				);
 			return res.next();
 		}catch(SQLException ex){

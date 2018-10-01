@@ -2,15 +2,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
-import java.awt.geom.Arc2D;
 
 class RegisterPanel extends JPanel{
 	GridBagConstraints cons = new GridBagConstraints();
 
 	//Labels
-	JLabel firstName_label = new JLabel("First Name",JLabel.LEFT);
-	JLabel lastName_label = new JLabel("Second Name",JLabel.LEFT);
-	JLabel telephone_label = new JLabel("Telephone",JLabel.LEFT);
+	protected JLabel[] Labels = {
+		new JLabel("First Name",JLabel.LEFT),
+		new JLabel("Second Name",JLabel.LEFT),
+		new JLabel("Telephone",JLabel.LEFT),
+		new JLabel("Date of Birth",JLabel.LEFT),
+	};
 
 	//Register Panel and compenents
 	JPanel register_panel = new JPanel();
@@ -19,29 +21,32 @@ class RegisterPanel extends JPanel{
 	//Fields
 	JTextField firstName_field = new JTextField("Hello",30);
 	JTextField lastName_field = new JTextField(30);
+	JTextField dob_field = new JTextField(10);
 	JTextField telephone_field = new JTextField(10);
 	JCheckBox male_checkbox = new JCheckBox("Male");
 	JCheckBox female_checkbox = new JCheckBox("Female");
 
 	JButton register_button = new JButton("Register User");
 
-	public RegisterPanel(DB database){
+	public RegisterPanel(DB database,int width,int height){
+		setPreferredSize(new Dimension(width,height));
+		setBackground(Color.BLUE);
 		cons.fill = GridBagConstraints.VERTICAL;
 		cons.insets = new Insets(0,0,5,10);
 
 		cons.gridy = 0;cons.gridx = 1;
 		add(register_text,cons);
 		cons.gridx = 0;
-		cons.gridy = 1;add(firstName_label,cons);
-		cons.gridx = 1;add(firstName_field,cons);
-
-		cons.gridx = 0;
-		cons.gridy = 2;add(lastName_label,cons);
-		cons.gridx = 1;add(lastName_field,cons);
-
-		cons.gridy = 3;
-		cons.gridx = 0;add(telephone_label,cons);
-		cons.gridx = 1;add(telephone_field,cons);
+		for (int i=0;i<Labels.length;i++){
+			cons.gridy++;
+			add(Labels[i],cons);
+		}
+		
+		cons.gridx = 1;
+		cons.gridy = 1;add(firstName_field,cons);
+		cons.gridy = 2;add(lastName_field,cons);
+		cons.gridy = 3;add(telephone_field,cons);
+		cons.gridy = 4;add(dob_field,cons);
 
 		female_checkbox.setFont(new Font("Serif", Font.PLAIN, 9));
 		male_checkbox.setFont(new Font("Serif", Font.PLAIN, 9));
@@ -57,7 +62,7 @@ class RegisterPanel extends JPanel{
 				male_checkbox.setSelected(true);
 			}});
 
-		cons.gridy = 4;
+		cons.gridy = 5;
 		cons.gridx = 0;add(new JLabel("Gender"),cons);
 		cons.gridx = 1;add(female_checkbox,cons);
 		cons.gridx = 2;add(male_checkbox,cons);
@@ -70,8 +75,8 @@ class RegisterPanel extends JPanel{
 					String gender = male_checkbox.isSelected()?"0":"1";
 					String fname = firstName_field.getText();
 					if ((fname.length() > 0)){
-						String lname = lastName_field.getText();
-						if (((lname.length() > 0))){
+						String lname = lastName_field.getText();String dob = dob_field.getText();
+						if (((lname.length() > 0) && (dob.length() > 0))){
 							String tele = telephone_field.getText();
 							if ((tele.length() == 10)  && (tele.charAt(0) == '0')){
 								for(int i=1;i<tele.length();i++){
@@ -80,8 +85,8 @@ class RegisterPanel extends JPanel{
 										return;
 									}
 								}
-								if (!database.CheckUser(fname,lname,tele,gender)){
-									database.CreateUser(fname,lname,tele,gender);
+								if (!database.CheckUser(fname,lname,tele,dob,gender)){
+									database.CreateUser(fname,lname,tele,dob,gender);
 									lastName_field.setText("");
 									firstName_field.setText("");
 									telephone_field.setText("");

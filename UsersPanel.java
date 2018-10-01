@@ -9,7 +9,9 @@ class UsersPanel extends JPanel{
 
 	String[] user_features = {"First Name","Last Name", "Telephone Number","Gender"};
 
-	public UsersPanel(DB database){
+	public UsersPanel(DB database,int width,int height){
+		setPreferredSize(new Dimension(width,height));
+		setBackground(Color.BLUE);
 		GridBagConstraints cons = new GridBagConstraints();
 		cons.fill = GridBagConstraints.VERTICAL;
 		cons.gridx = 1;cons.gridy = 0;

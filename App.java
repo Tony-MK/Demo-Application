@@ -18,19 +18,17 @@ public class App{
 	//Application Panel and compenents
 	JFrame app_frame = new JFrame("Demo Application");
 	JTabbedPane app_panel = new JTabbedPane(JTabbedPane.BOTTOM,0);
-
-
 	DB database = new DB("demo","users");
 
+	public JButton login_button = new JButton("Login");
+	public JButton exit_button = new JButton("Exit");
+	public JButton logout_button = new JButton("Exit");
 
-	//Fields
 	JTextField username = new JTextField("UserName",30);
 	JPasswordField password = new JPasswordField("Password",30);
-	
-	//LButtons
-	JButton login_button = new JButton("Login");
-	JButton exit_button = new JButton("Exit");
 
+	JPanel login_panel;
+	JPanel logout_panel;
 
 
 	public static void main(String[] args){
@@ -41,26 +39,10 @@ public class App{
          }
       });
     }
-	public void newDashboard(){
-		dashboard = new Dashboard(database);
-		setDefaults(dashboard);
-	}
-	private void newRegisterForm(){
-		register_panel = new RegisterPanel(database);
-		setDefaults(register_panel);
-	}
-	public void newUsersTab(){
-		// View Users' table
-		users_panel = new UsersPanel(database);
-		setDefaults(users_panel);
-	}
-	public void setDefaults(JPanel p){
-		
-	}
-	
 	public App(){
-		newLoginPanel();
-		addButtonListensers();
+		addListensers();
+		login_panel = new LoginPanel(640,480);
+		logout_panel = new LogoutPanel(640,480);
 		// setting size of main_panel
 		panel.setLayout(new CardLayout());
 		panel.setPreferredSize(new Dimension(640,480));
@@ -69,38 +51,9 @@ public class App{
 		frame.setSize(640,480);
 		frame.setVisible(true);
 	}
-	private void newLoginPanel(){
-		GridBagConstraints cons = new GridBagConstraints();
-		cons.gridy = 0;cons.gridx = 1;
-		cons.insets = new Insets(60,0,0,0);cons.fill = GridBagConstraints.HORIZONTAL;
-		JLabel login_text = new JLabel("Login to Countinue",JLabel.CENTER);
-		login_text.setFont(new Font("Serif", Font.PLAIN, 29));
-		login_panel.add(login_text,cons);
-		//adding username 
-		cons.insets = new Insets(20,0,0,0);
-		cons.gridy = 1;login_panel.add(username,cons);
-		cons.gridy = 2;login_panel.add(password,cons);
-
-		cons.insets = new Insets(30,0,0,0);
-		cons.gridy = 4;login_panel.add(login_button,cons);
-		cons.gridy = 5;login_panel.add(exit_button,cons);
-		setDefaults(login_panel);
-	}
-	private JPanel newLogoutPanel(){
-		GridBagConstraints cons = new GridBagConstraints();
-		cons.insets = new Insets(60,0,0,0);
-		cons.fill = GridBagConstraints.HORIZONTAL;
-
-		cons.gridy = 0;cons.gridx = 0;
-		JLabel logout_text = new JLabel("Are you Sure you would like to end this session",JLabel.CENTER);
-		register_button.setFont(new Font("Serif",Font.PLAIN,31));
-		logout.add(logout_text,cons);
-
-		cons.gridy = 1;cons.gridx = 0;
-		JButton logout_button = new JButton("END SESSION");
-		register_button.setFont(new Font("Serif",Font.PLAIN,21));
-		logout_button.setBackground(Color.RED);
-		logout_button.addActionListener(ActionListener a){
+	private void addListensers(){
+		// giving login button a authorization fuctionality (action) 
+		logout_button.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				//closing program
 				panel.remove(app_panel);
@@ -110,11 +63,8 @@ public class App{
 				frame.setVisible(true);
 				System.exit(0);
 			}
-		}
-		logout_panel.add(logout_button,cons);
-	}
-	private void addButtonListensers(){
-		// giving login button a authorization fuctionality (action) 
+		});
+
 		login_button.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				//checking if username and passoword is correct
@@ -124,23 +74,12 @@ public class App{
 					panel.remove(login_panel);
 					frame.setVisible(false);
 					//building panels
-					JPanel login_panel = new JPanel();
-					JPanel register_panel = new JPanel();
-					JPanel users_panel = new JPanel();
-					JPanel dashboard = newDashboard();;
-					JPanel logout_panel  = new JPanel();
-					newUsersTab();newRegisterForm();newLogoutPanel();
-
-					// adding dashboard panel to application_panel
-					app_panel.addTab("Dashboard",dashboard);
-
+					app_panel.addTab("Dashboard",new Dashboard(database,640,480));
 					// adding list of users panel to application_panel
-					app_panel.addTab("View Users",users_panel);
-
+					app_panel.addTab("View Users", new UsersPanel(database,640,480));
 					// adding register form panel to application_panel
-					app_panel.addTab("Register User",register_panel);
+					app_panel.addTab("Register User", new RegisterPanel(database,640,480));
 					// adding logout Page to application panel;
-
 					app_panel.addTab("Logout",logout_panel);
 					// setting size of application_panel
 					app_panel.setPreferredSize(new Dimension(640,480));
@@ -178,5 +117,53 @@ public class App{
 			return false;
 		}
 		return true;
-	}	
+	}
+
+	class LoginPanel extends JPanel{
+	
+	//LButtons
+	
+
+	//Fields
+	public LoginPanel(int width,int height){
+		setLayout(new GridBagLayout());
+		setBackground(Color.BLUE);
+		setPreferredSize(new Dimension(width,height));
+		
+		GridBagConstraints cons = new GridBagConstraints();
+		cons.gridy = 0;cons.gridx = 1;
+		cons.insets = new Insets(60,0,0,0);cons.fill = GridBagConstraints.HORIZONTAL;
+		JLabel login_text = new JLabel("Login to Countinue",JLabel.CENTER);
+		login_text.setFont(new Font("Serif", Font.PLAIN, 29));
+		add(login_text,cons);
+		//adding username 
+		cons.insets = new Insets(20,0,0,0);
+		cons.gridy = 1;add(username,cons);
+		cons.gridy = 2;add(password,cons);
+
+		cons.insets = new Insets(30,0,0,0);
+		cons.gridy = 4;add(login_button,cons);
+		cons.gridy = 5;add(exit_button,cons);
+		}
+
+	}
+
+	class LogoutPanel extends JPanel{
+		public LogoutPanel(int width,int height){
+			setLayout(new GridBagLayout());
+			setBackground(Color.BLUE);
+			setPreferredSize(new Dimension(width,height));
+			GridBagConstraints cons = new GridBagConstraints();
+			cons.insets = new Insets(60,0,0,0);
+			cons.fill = GridBagConstraints.HORIZONTAL;
+			cons.gridy = 0;cons.gridx = 0;
+			JLabel logout_text = new JLabel("Are you Sure you would like to end this session",JLabel.CENTER);
+			add(logout_text,cons);
+
+			cons.gridy = 1;cons.gridx = 0;
+			JButton logout_button = new JButton("END SESSION");
+			logout_button.setFont(new Font("Serif",Font.PLAIN,21));
+			add(logout_button,cons);
+		}
+	}
 }
