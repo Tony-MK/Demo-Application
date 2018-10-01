@@ -10,7 +10,7 @@ class DB{
 	public void CreateUser(String fname,String lname,String telephone,String gender){
 		try{
 			Connection conn = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3307/"+database_name+"?useSSL=false","root", "Amakau@123"
+					"jdbc:mysql://localhost:3307/"+database_name+"?useSSL=false","Tony", "pass"
 			);
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(

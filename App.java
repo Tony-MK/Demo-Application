@@ -21,10 +21,7 @@ public class App{
 
 
 	DB database = new DB("demo","users");
-	JPanel login_panel = new JPanel();
-	JPanel register_panel = new JPanel();
-	JPanel users_panel = new JPanel();
-	JPanel dashboard = new JPanel();
+
 
 	//Fields
 	JTextField username = new JTextField("UserName",30);
@@ -58,24 +55,21 @@ public class App{
 		setDefaults(users_panel);
 	}
 	public void setDefaults(JPanel p){
-		p.setLayout(new GridBagLayout());
-		p.setBackground(Color.BLUE);
-		p.setPreferredSize(new Dimension(440,380));
+		
 	}
 	
 	public App(){
-		constructLoginPanel();
+		newLoginPanel();
 		addButtonListensers();
-
 		// setting size of main_panel
-		panel.add(login_panel);
 		panel.setLayout(new CardLayout());
 		panel.setPreferredSize(new Dimension(640,480));
+		panel.add(login_panel);
 		frame.add(panel);
 		frame.setSize(640,480);
 		frame.setVisible(true);
 	}
-	private void constructLoginPanel(){
+	private void newLoginPanel(){
 		GridBagConstraints cons = new GridBagConstraints();
 		cons.gridy = 0;cons.gridx = 1;
 		cons.insets = new Insets(60,0,0,0);cons.fill = GridBagConstraints.HORIZONTAL;
@@ -92,25 +86,50 @@ public class App{
 		cons.gridy = 5;login_panel.add(exit_button,cons);
 		setDefaults(login_panel);
 	}
+	private JPanel newLogoutPanel(){
+		GridBagConstraints cons = new GridBagConstraints();
+		cons.insets = new Insets(60,0,0,0);
+		cons.fill = GridBagConstraints.HORIZONTAL;
+
+		cons.gridy = 0;cons.gridx = 0;
+		JLabel logout_text = new JLabel("Are you Sure you would like to end this session",JLabel.CENTER);
+		register_button.setFont(new Font("Serif",Font.PLAIN,31));
+		logout.add(logout_text,cons);
+
+		cons.gridy = 1;cons.gridx = 0;
+		JButton logout_button = new JButton("END SESSION");
+		register_button.setFont(new Font("Serif",Font.PLAIN,21));
+		logout_button.setBackground(Color.RED);
+		logout_button.addActionListener(ActionListener a){
+			public void actionPerformed(ActionEvent e){
+				//closing program
+				panel.remove(app_panel);
+				frame.setVisible(false);
+
+				panel.add(login_panel);
+				frame.setVisible(true);
+				System.exit(0);
+			}
+		}
+		logout_panel.add(logout_button,cons);
+	}
 	private void addButtonListensers(){
-		// adding login function
+		// giving login button a authorization fuctionality (action) 
 		login_button.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				//checking if username and passoword is correct
 				boolean auth = (checkInput(username.getText().toCharArray(),correct_name)) && (checkInput(password.getPassword(),correct_pass));
 				if (auth){
 					//Granting user acess
-
-					
 					panel.remove(login_panel);
-
 					frame.setVisible(false);
-					
-
-
-					newDashboard();
-					newUsersTab();
-					newRegisterForm();
+					//building panels
+					JPanel login_panel = new JPanel();
+					JPanel register_panel = new JPanel();
+					JPanel users_panel = new JPanel();
+					JPanel dashboard = newDashboard();;
+					JPanel logout_panel  = new JPanel();
+					newUsersTab();newRegisterForm();newLogoutPanel();
 
 					// adding dashboard panel to application_panel
 					app_panel.addTab("Dashboard",dashboard);
@@ -120,12 +139,11 @@ public class App{
 
 					// adding register form panel to application_panel
 					app_panel.addTab("Register User",register_panel);
-					// giving login button a authorization fuctionality (action) 
-					
+					// adding logout Page to application panel;
+
+					app_panel.addTab("Logout",logout_panel);
 					// setting size of application_panel
 					app_panel.setPreferredSize(new Dimension(640,480));
-
-
 					panel.add(app_panel);
 					frame.setVisible(true);
 				
@@ -136,7 +154,7 @@ public class App{
 		// closing program when exit action is clicked e
 		exit_button.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				frame.dispose();
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 				System.exit(0);
 			}});
 		// giving some functionality for Login fields  

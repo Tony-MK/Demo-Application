@@ -43,7 +43,7 @@ class RegisterPanel extends JPanel{
 		cons.gridx = 0;add(telephone_label,cons);
 		cons.gridx = 1;add(telephone_field,cons);
 
-		female_checkbox.setFont(new Font("Female", Font.PLAIN, 9));
+		female_checkbox.setFont(new Font("Serif", Font.PLAIN, 9));
 		male_checkbox.setFont(new Font("Serif", Font.PLAIN, 9));
 
 		female_checkbox.addActionListener(new ActionListener(){

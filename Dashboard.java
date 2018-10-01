@@ -6,19 +6,24 @@ import java.awt.geom.Arc2D;
 
 class Dashboard extends JPanel{
 	GridBagConstraints cons = new GridBagConstraints();
+	public Dashboard(DB database,int width,int height){
+		setLayout(new GridBagLayout());
+		setBackground(Color.BLUE);
+		setPreferredSize(new Dimension(width,height));
 
-	public Dashboard(DB database){
 		cons.fill = GridBagConstraints.HORIZONTAL;
-		cons.gridy = 0;
-		cons.gridx = 0;
+		cons.gridy = 0;cons.gridx = 0;
 		// Chart title
-		add(new JLabel("Gender Balance Chart",JLabel.CENTER),cons);
-		// Chart postion
+		String title = new JLabel("Gender Balance Chart",JLabel.CENTER);
+		title.setFont(new Font("Serif",Font.Plain,9));
+		add(title,cons);
 		
+		cons.gridy = 0;cons.gridx = 0;
 		// gender_ratio is the female to male ratio according to the database
 		double gender_ratio = (double) database.CountRows("`gender`='1'")/database.CountRows("`gender`='0'");
-		
-		cons.gridy = 1;add(new JLabel("Female to Male Ratio  1 : "+Double.toString(gender_ratio),JLabel.CENTER));
+		String sub_title = new JLabel("Female to Male Ratio  1 : "+Double.toString(gender_ratio),JLabel.CENTER);
+		sub_title.setFont(new Font("Serif",Font.Plain,9));
+		cons.gridy = 1;add(sub_title);
 		// checking if ratio is vaild
 		cons.gridy = 2;
 		cons.gridwidth = 200;
