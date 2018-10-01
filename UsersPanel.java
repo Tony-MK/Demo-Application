@@ -12,6 +12,7 @@ class UsersPanel extends JPanel{
 	public UsersPanel(DB database,int width,int height){
 		setPreferredSize(new Dimension(width,height));
 		setBackground(Color.BLUE);
+		setLayout(new GridBagLayout());
 		GridBagConstraints cons = new GridBagConstraints();
 		cons.fill = GridBagConstraints.VERTICAL;
 		cons.gridx = 1;cons.gridy = 0;
@@ -22,7 +23,8 @@ class UsersPanel extends JPanel{
 		cons.gridy = 3;
 		try{
 			add(new JTable(database.GetUsers(),user_features),cons);
-		}catch(Exception e){
+		}catch(Exception ex){
+			ex.printStackTrace();
 			add(new JLabel("No Users Found",JLabel.CENTER),cons);
 		}
 	}

@@ -1,16 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.*;
-import java.awt.geom.Arc2D;
-
-
 public class App{
-	final boolean DEBUG = true;
+	protected final boolean DEBUG = false;
 
 	//Test Variables
-	char[] correct_pass = {'W','k','i'};
-	char[] correct_name = {'T','o','n','y'};
+	char[] correct_pass = {'W','k','i'};char[] correct_name = {'T','o','n','y'};
 
 	JFrame frame = new JFrame("Login");
 	JPanel panel = new JPanel();
@@ -22,7 +17,7 @@ public class App{
 
 	public JButton login_button = new JButton("Login");
 	public JButton exit_button = new JButton("Exit");
-	public JButton logout_button = new JButton("Exit");
+	public JButton logout_button = new JButton("YES, Logout");
 
 	JTextField username = new JTextField("UserName",30);
 	JPasswordField password = new JPasswordField("Password",30);
@@ -55,13 +50,11 @@ public class App{
 		// giving login button a authorization fuctionality (action) 
 		logout_button.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				//closing program
+				//logout from session
 				panel.remove(app_panel);
 				frame.setVisible(false);
-
 				panel.add(login_panel);
 				frame.setVisible(true);
-				System.exit(0);
 			}
 		});
 
@@ -132,7 +125,7 @@ public class App{
 		
 		GridBagConstraints cons = new GridBagConstraints();
 		cons.gridy = 0;cons.gridx = 1;
-		cons.insets = new Insets(60,0,0,0);cons.fill = GridBagConstraints.HORIZONTAL;
+		cons.insets = new Insets(60,0,0,0);cons.fill = GridBagConstraints.VERTICAL;
 		JLabel login_text = new JLabel("Login to Countinue",JLabel.CENTER);
 		login_text.setFont(new Font("Serif", Font.PLAIN, 29));
 		add(login_text,cons);
@@ -155,13 +148,14 @@ public class App{
 			setPreferredSize(new Dimension(width,height));
 			GridBagConstraints cons = new GridBagConstraints();
 			cons.insets = new Insets(60,0,0,0);
-			cons.fill = GridBagConstraints.HORIZONTAL;
+			cons.fill = GridBagConstraints.VERTICAL;
 			cons.gridy = 0;cons.gridx = 0;
-			JLabel logout_text = new JLabel("Are you Sure you would like to end this session",JLabel.CENTER);
+			JLabel logout_text = new JLabel("Are you sure you want  to close this session",JLabel.CENTER);
+			logout_text.setFont(new Font("Serif",Font.PLAIN,31));
+
 			add(logout_text,cons);
 
 			cons.gridy = 1;cons.gridx = 0;
-			JButton logout_button = new JButton("END SESSION");
 			logout_button.setFont(new Font("Serif",Font.PLAIN,21));
 			add(logout_button,cons);
 		}
