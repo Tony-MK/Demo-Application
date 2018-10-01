@@ -1,12 +1,17 @@
 import java.sql.*;
 class DB{
-	protected String table_name;
-	protected String database_name;
+	//Male and female representing
 	public final String MALE = "Male";
-	public final String FEMALE = "Female";
+	protected final String FEMALE = "Female";
+
+	//Database Variables
+	protected String TABLE_NAME;
+	protected String DB_NAME;
+	protected final String DB_USERNAME = "root";
+	protected final String DB_PASSWORD = "password";
 	public DB(String dbName,String userstable){
-		this.database_name = dbName;
-		this.table_name = userstable;
+		this.DB_NAME = dbName;
+		this.TABLE_NAME = userstable;
 	}
 	private String nameColo = "firstname,lastname,telephone,gender";
 	public String booltoGender(boolean gender){
@@ -16,11 +21,11 @@ class DB{
 	public void CreateUser(String fname,String lname,String telephone,String dob,Boolean gender){
 		try{
 			Connection conn = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3307/"+database_name+"?useSSL=false","Tony", "pass"
+					"jdbc:mysql://localhost:3307/"+DB_NAME+"?useSSL=false",DB_USERNAME, DB_PASSWORD
 			);
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(
-				"INSERT INTO "+table_name+" ("+nameColo+") VALUES('"+fname+"','"+lname+"','"+telephone+"','"+","+dob+","+booltoGender(gender)+"');"
+				"INSERT INTO "+TABLE_NAME+" ("+nameColo+") VALUES('"+fname+"','"+lname+"','"+telephone+"','"+","+dob+","+booltoGender(gender)+"');"
 			);
 		}catch(SQLException ex){
 			ex.printStackTrace();
@@ -31,10 +36,10 @@ class DB{
 	public boolean CheckUser(String fname,String lname,String telephone,String dob,boolean gender){
 		try{
 			Connection conn = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3307/"+database_name+"?useSSL=false","root", "Amakau@123"
+					"jdbc:mysql://localhost:3307/"+DB_NAME+"?useSSL=false","root", "Amakau@123"
 			);
 			Statement stmt = conn.createStatement();
-			ResultSet res = stmt.executeQuery("SELECT "+nameColo+" FROM "+table_name+" WHERE `firstname`='"+fname+"' AND `lastname`='"+lname+"' AND `telephone`='"+telephone+"' AND `date_of_birth`='"+dob+"' AND `gender`='"+booltoGender(gender)+"' limit 1;"
+			ResultSet res = stmt.executeQuery("SELECT "+nameColo+" FROM "+TABLE_NAME+" WHERE `firstname`='"+fname+"' AND `lastname`='"+lname+"' AND `telephone`='"+telephone+"' AND `date_of_birth`='"+dob+"' AND `gender`='"+booltoGender(gender)+"' limit 1;"
 				);
 			return res.next();
 		}catch(SQLException ex){
@@ -45,7 +50,7 @@ class DB{
 	public int CountRows(String... condition){
 		try{
 			Connection conn = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3307/"+database_name+"?useSSL=false","root", "Amakau@123"
+					"jdbc:mysql://localhost:3307/"+DB_NAME+"?useSSL=false","root", "Amakau@123"
 			);
 			String str = "SELECT COUNT(*) FROM Users " ;
 			try{
@@ -74,10 +79,10 @@ class DB{
 		if (nRows > 0) {
 			String[][] users = new String[nRows][4];
 			Connection conn = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3307/"+database_name+"?useSSL=false","root", "Amakau@123"
+					"jdbc:mysql://localhost:3307/"+DB_NAME+"?useSSL=false","root", "Amakau@123"
 			);
 			Statement stmt = conn.createStatement();
-			ResultSet res = stmt.executeQuery("SELECT * FROM "+table_name+" LIMIT "+Integer.toString(nRows)+";");
+			ResultSet res = stmt.executeQuery("SELECT * FROM "+TABLE_NAME+" LIMIT "+Integer.toString(nRows)+";");
 			while(res.next()){
 				nRows -= 1;
 				String[] user = {
